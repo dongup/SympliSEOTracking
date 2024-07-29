@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SympliSEOTracking.ApiServiceModels\SympliSEOTracking.ApiServiceModels.csproj" />
+    <ProjectReference Include="..\SympliSEOTracking.ServiceDefaults\SympliSEOTracking.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>
