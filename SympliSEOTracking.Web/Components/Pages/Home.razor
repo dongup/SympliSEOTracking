@@ -1,7 +1,72 @@
 ﻿@page "/"
-
+@using SympliSEOTracking.Core
+@using Microsoft.Extensions.Caching.Memory
+@rendermode InteractiveServer
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Welcome to SEO Ranking.</h1>
 
-Welcome to your new app.
+<label class="form-label">Target url</label>
+<InputText class="form-control" placeholder="input target url" @bind-Value="@targetUrl"/>
+
+<label class="form-label">Search term</label>
+<InputText class="form-control" placeholder="input search term" @bind-Value="@searchTerm"/>
+
+<label class="form-label">Search engine</label>
+<InputText class="form-control" placeholder="input search engine" @bind-Value="@searchEngine"/>
+<button @onclick="Search" class="mt-2 btn btn-success">Search</button>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="badge bg-danger">
+        ErrorMessage: @ErrorMessage
+    </div>
+}
+
+@if (ranking != null && ranking.Any())
+{
+    <p>Ranking:</p>
+    <ul>
+    @foreach(var rank in ranking)
+    {
+        <p>@rank</p>
+    }
+    </ul>
+}
+else if(ranking != null)
+{
+    <p>No ranking found</p>
+}
+
+@inject Func<string, ISearchResultHandler?> _searchResultHandlerFactory;
+@inject IMemoryCache _cache;
+@code
+{
+    private string? targetUrl;
+    private string? searchTerm;
+    private string? searchEngine = "Google";
+    private List<int>? ranking;
+    private string ErrorMessage = string.Empty;
+    
+    private string CacheKey => $"{targetUrl}_{searchTerm}_{searchEngine}";
+    async Task Search()
+    {
+        ranking = null;
+        var handler = _searchResultHandlerFactory(searchEngine);
+        if (handler == null)
+        {
+            ErrorMessage = $"Sorry, {searchEngine} search engine is not supported yet =((.";
+        }
+
+        if (_cache.TryGetValue(CacheKey, out List<int>? rankingCached))
+        {
+            ranking = rankingCached;
+        }
+        else
+        {
+            var searchResultHtml = await handler.GetSearchResultAsync(targetUrl, searchTerm);
+            ranking = await handler.GetUrlRankAsync(targetUrl, searchResultHtml);
+            _cache.Set(CacheKey, ranking, TimeSpan.FromHours(1));
+        }
+    }
+}

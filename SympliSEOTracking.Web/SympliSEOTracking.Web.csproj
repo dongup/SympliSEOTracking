@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\SympliSEOTracking.ApiServiceModels\SympliSEOTracking.ApiServiceModels.csproj" />
+    <ProjectReference Include="..\SympliSEOTracking.Core\SympliSEOTracking.Core.csproj" />
     <ProjectReference Include="..\SympliSEOTracking.ServiceDefaults\SympliSEOTracking.ServiceDefaults.csproj" />
   </ItemGroup>
 

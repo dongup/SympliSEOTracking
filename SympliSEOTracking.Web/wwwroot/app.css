@@ -10,6 +10,10 @@ h1:focus {
     outline: 1px solid #e50800;
 }
 
+datalist {
+    display: block;
+}
+
 .validation-message {
     color: #e50800;
 }

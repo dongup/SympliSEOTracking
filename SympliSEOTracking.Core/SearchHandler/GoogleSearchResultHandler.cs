@@ -8,7 +8,7 @@ public class GoogleSearchResultHandler : ISearchResultHandler
     {
         targetUrl = targetUrl.ToLower();
 
-        string pattern = @"<a\s+href\s*=\s*[""'](http[s]?://[^""']+)[""'][^>]*>";
+        string pattern = @"<a\s+(?:[^>]*?\s+)?href=""(https?://(?![^""]*google)[^\s""]+)""";
 
         var ranks = new List<int>(); 
         int currentRank = 0;
@@ -31,8 +31,14 @@ public class GoogleSearchResultHandler : ISearchResultHandler
         return ranks;
     }
 
-    public Task<string> GetSearchResultAsync(string targetUrl, string searchTerm)
+    public async Task<string> GetSearchResultAsync(string targetUrl, string searchTerm)
     {
-        throw new NotImplementedException();
+        string url = $"https://www.google.com/search?q={Uri.EscapeDataString(searchTerm)}";
+
+        using (HttpClient client = new HttpClient())
+        {
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+            return await client.GetStringAsync(url);
+        }
     }
 }
